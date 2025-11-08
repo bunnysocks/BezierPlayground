@@ -44,3 +44,8 @@ To Build an **interactive cubic Bézier curve simulation** that responds in real
 1. Open the project in **Xcode**.
 2. Run on a **real device** (simulator won’t provide gyroscope data).
 3. Move or tilt your device to see the curve react.
+
+## Demo (iOS 16)
+https://github.com/user-attachments/assets/30ba4c95-48b9-4875-bce8-6a0e0f01568d
+
+
