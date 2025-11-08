@@ -9,12 +9,49 @@ import Foundation
 import UIKit
 
 class BezierView: UIView {
+    private var displayLink: CADisplayLink?
     
     // Control Points
-    let P0 = CGPoint(x: 100, y: 400)
-    let P1 = CGPoint(x: 150, y: 100)
-    let P2 = CGPoint(x: 250, y: 700)
-    let P3 = CGPoint(x: 300, y: 400)
+    var P0 = CGPoint(x: 100, y: 400)
+    var P1 = CGPoint(x: 150, y: 100)
+    var P2 = CGPoint(x: 250, y: 700)
+    var P3 = CGPoint(x: 300, y: 400)
+    
+    // Motion properties
+    var velocity1 = CGPoint.zero
+    var velocity2 = CGPoint.zero
+    var targetP1 = CGPoint(x: 150, y: 100)
+    var targetP2 = CGPoint(x: 250, y: 700)
+    
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        backgroundColor = .white
+        
+        displayLink = CADisplayLink(target: self, selector: #selector(update))
+        displayLink?.add(to: .main, forMode: .default)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    @objc func update() {
+        let k: CGFloat = 0.1      // spring stiffness
+        let damping: CGFloat = 0.8 // resistance
+
+        // --- P1 ---
+        let acceleration1 = k * (targetP1 - P1)  - damping * velocity1
+        velocity1 = velocity1 + acceleration1
+        P1 = P1 + velocity1
+
+        // --- P2 ---
+        let acceleration2 = k * (targetP2 - P2) - damping * velocity2
+        velocity2 = velocity2 + acceleration2
+        P2 = P2 + velocity2
+        
+        setNeedsDisplay()
+    }
+
     
     func computeBezierPoints(tStep: CGFloat) -> [CGPoint] {
         var points: [CGPoint] = []
@@ -72,3 +109,5 @@ class BezierView: UIView {
     }
 
 }
+
+
