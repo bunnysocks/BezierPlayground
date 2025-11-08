@@ -18,17 +18,17 @@ class ViewController: UIViewController {
         bezierView.backgroundColor = .white
         view.addSubview(bezierView)
         
-        let pointA = CGPoint(x: 10, y: 20)
-        let pointB = CGPoint(x: 5, y: 15)
-                
-        let sum = pointA + pointB
-        print("Sum of points: \(sum)")
-        let diff = pointA - pointB
-        print("Sum of points: \(diff)")
-        let mul = pointA * pointB
-        print("Sum of points: \(mul)")
-        let div = pointA / pointB
-        print("Sum of points: \(div)")
+//        let pointA = CGPoint(x: 10, y: 20)
+//        let pointB = CGPoint(x: 5, y: 15)
+//                
+//        let sum = pointA + pointB
+//        print("Sum of points: \(sum)")
+//        let diff = pointA - pointB
+//        print("Sum of points: \(diff)")
+//        let mul = pointA * pointB
+//        print("Sum of points: \(mul)")
+//        let div = pointA / pointB
+//        print("Sum of points: \(div)")
 
     }
 

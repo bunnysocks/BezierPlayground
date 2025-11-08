@@ -109,9 +109,9 @@ class BezierView: UIView {
         
         let bezierPoints = computeBezierPoints(tStep: 0.02)
         
-        // Draw curve
-        UIColor.systemBlue.setStroke()
-        context.setLineWidth(3.0)
+//        // Draw curve
+//        UIColor.systemBlue.setStroke()
+//        context.setLineWidth(3.0)
         
         if let first = bezierPoints.first {
             context.move(to: first)
@@ -122,7 +122,7 @@ class BezierView: UIView {
         }
         
         // Draw control points
-        UIColor.systemRed.setFill()
+        UIColor.systemGray2.setFill()
         let controlPoints = [P0, P1, P2, P3]
         for p in controlPoints {
             let r = CGRect(x: p.x - 5, y: p.y - 5, width: 10, height: 10)
@@ -131,7 +131,10 @@ class BezierView: UIView {
         
         // Connect control points with gray lines
         UIColor.systemGray.setStroke()
-        context.setLineWidth(1.0)
+        context.setLineWidth(1.5)
+        // make line dotted
+        let dashPatternForLine: [CGFloat] = [4, 2] // 4 points drawn, 2 points space
+        context.setLineDash(phase: 0, lengths: dashPatternForLine)
         context.move(to: P0)
         context.addLine(to: P1)
         context.addLine(to: P2)
@@ -140,14 +143,21 @@ class BezierView: UIView {
         
         
         // draw curve
-        UIColor.systemBlue.setStroke()
-        context.setLineWidth(4)
+        let silver = UIColor(white: 0.85, alpha: 0.5) // light gray with 50% opacity
+        silver.setStroke()
+        context.setLineWidth(16) // thicker line
+        context.setLineCap(.round) // makes ends smooth and nicer
         context.addLines(between: bezierPoints)
         context.strokePath()
 
+
         // draw tangents
-        UIColor.systemGreen.setStroke()
+        UIColor.systemGray.setStroke()
         context.setLineWidth(1.5)
+
+//        // make line dotted
+//        let dashPattern: [CGFloat] = [4, 2] // 4 points drawn, 2 points space
+//        context.setLineDash(phase: 0, lengths: dashPattern)
 
         let tValues = stride(from: 0.0, through: 1.0, by: 0.5)
         for t in tValues {
@@ -157,13 +167,29 @@ class BezierView: UIView {
             let norm = sqrt(tangent.x * tangent.x + tangent.y * tangent.y)
             guard norm > 0 else { continue }
             let dir = CGPoint(x: tangent.x / norm, y: tangent.y / norm)
-            let scale: CGFloat = 40                        // line length
+            let scale: CGFloat = 20                        // shorter line
             let end = CGPoint(x: curvePoint.x + dir.x * scale,
                               y: curvePoint.y + dir.y * scale)
+            
+            // draw line
             context.move(to: curvePoint)
             context.addLine(to: end)
             context.strokePath()
+            
+            // draw arrowhead
+            let arrowSize: CGFloat = 8
+            let perp = CGPoint(x: -dir.y * arrowSize, y: dir.x * arrowSize)
+            context.move(to: end)
+            context.addLine(to: CGPoint(x: end.x - dir.x * arrowSize + perp.x,
+                                        y: end.y - dir.y * arrowSize + perp.y))
+            context.move(to: end)
+            context.addLine(to: CGPoint(x: end.x - dir.x * arrowSize - perp.x,
+                                        y: end.y - dir.y * arrowSize - perp.y))
+            context.strokePath()
         }
+
+        // reset dash
+        context.setLineDash(phase: 0, lengths: [])
 
 
     }
