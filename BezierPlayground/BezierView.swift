@@ -10,6 +10,7 @@ import UIKit
 
 class BezierView: UIView {
     private var displayLink: CADisplayLink?
+    var useFakeMotion = true
     
     // Control Points
     var P0 = CGPoint(x: 100, y: 400)
@@ -36,6 +37,17 @@ class BezierView: UIView {
     }
 
     @objc func update() {
+        if useFakeMotion {
+            let time = CACurrentMediaTime()
+            let x = sin(time) * 100 + 200
+            let y = cos(time * 0.7) * 100 + 400
+            targetP1 = CGPoint(x: x, y: y)
+            
+            let x2 = sin(time * 1.3) * 120 + 200
+            let y2 = cos(time * 0.9) * 80 + 400
+            targetP2 = CGPoint(x: x2, y: y2)
+        }
+
         let k: CGFloat = 0.1      // spring stiffness
         let damping: CGFloat = 0.8 // resistance
 
