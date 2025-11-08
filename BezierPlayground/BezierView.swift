@@ -85,6 +85,25 @@ class BezierView: UIView {
         return points
     }
     
+    func computeTangent(at t: CGFloat) -> CGPoint {
+        let oneMinusT = 1 - t
+        let term1 = (3 * oneMinusT * oneMinusT) * (P1 - P0)
+        let term2 = (6 * oneMinusT * t) * (P2 - P1)
+        let term3 = (3 * t * t) * (P3 - P2)
+        return term1 + term2 + term3
+    }
+    
+    func cubicBezierPoint(t: CGFloat) -> CGPoint {
+        let oneMinusT = 1 - t
+        let term1 = (oneMinusT * oneMinusT * oneMinusT) * P0
+        let term2 = (3 * oneMinusT * oneMinusT * t) * P1
+        let term3 = (3 * oneMinusT * t * t) * P2
+        let term4 = (t * t * t) * P3
+        return term1 + term2 + term3 + term4
+    }
+
+
+    
     override func draw(_ rect: CGRect) {
         guard let context = UIGraphicsGetCurrentContext() else { return }
         
@@ -118,6 +137,35 @@ class BezierView: UIView {
         context.addLine(to: P2)
         context.addLine(to: P3)
         context.strokePath()
+        
+        
+        // draw curve
+        UIColor.systemBlue.setStroke()
+        context.setLineWidth(4)
+        context.addLines(between: bezierPoints)
+        context.strokePath()
+
+        // draw tangents
+        UIColor.systemGreen.setStroke()
+        context.setLineWidth(1.5)
+
+        let tValues = stride(from: 0.0, through: 1.0, by: 0.5)
+        for t in tValues {
+            let tValue = CGFloat(t)
+            let curvePoint = cubicBezierPoint(t: tValue)   // position on curve
+            let tangent = computeTangent(at: tValue)       // derivative
+            let norm = sqrt(tangent.x * tangent.x + tangent.y * tangent.y)
+            guard norm > 0 else { continue }
+            let dir = CGPoint(x: tangent.x / norm, y: tangent.y / norm)
+            let scale: CGFloat = 40                        // line length
+            let end = CGPoint(x: curvePoint.x + dir.x * scale,
+                              y: curvePoint.y + dir.y * scale)
+            context.move(to: curvePoint)
+            context.addLine(to: end)
+            context.strokePath()
+        }
+
+
     }
     
     override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
