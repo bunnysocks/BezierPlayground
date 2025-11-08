@@ -107,6 +107,22 @@ class BezierView: UIView {
         context.addLine(to: P3)
         context.strokePath()
     }
+    
+    override func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+        guard let touch = touches.first else { return }
+        let location = touch.location(in: self)
+
+        // Choose which control point to move (whichever is closer)
+        let d1 = hypot(location.x - P1.x, location.y - P1.y)
+        let d2 = hypot(location.x - P2.x, location.y - P2.y)
+
+        if d1 < d2 {
+            targetP1 = location
+        } else {
+            targetP2 = location
+        }
+    }
+
 
 }
 
